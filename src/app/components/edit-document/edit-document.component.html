@@ -1,1 +1,73 @@
-<p>edit-document works!</p>
+<div class="header">
+    <mat-toolbar color="primary">
+      <span>Document Management System</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+  </div>
+  <div class="edit-document-container">
+   
+    <h2>Edit Document</h2>
+    <form [formGroup]="documentForm" (ngSubmit)="saveDocument()">
+      <div class="form-group">
+        <label for="documentTitle">Title</label>
+        <input id="documentTitle" class="form-control" formControlName="documentTitle" />
+      </div>
+  
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select id="categoryId" class="form-control" formControlName="categoryId">
+          <option *ngFor="let cat of categories" [value]="cat.categoryId">
+            {{ cat.categoryName }}
+          </option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="priority">Priority</label>
+        <input type="range" id="priority" class="form-control-range" formControlName="priority" min="1" max="7" />
+        <small class="form-text text-muted">
+          {{documentForm.get('priority')?.value === 1 ? 'Not at all Important' :
+            documentForm.get('priority')?.value === 2 ? 'Slightly Important' :
+            documentForm.get('priority')?.value === 3 ? 'Somewhat Important' :
+            documentForm.get('priority')?.value === 4 ? 'Moderately Important' :
+            documentForm.get('priority')?.value === 5 ? 'Important' :
+            documentForm.get('priority')?.value === 6 ? 'Very Important' :
+            'Extremely Important'}}
+        </small>
+      </div>
+  
+      <div class="form-group">
+        <label for="importance">Importance</label>
+        <input type="range" id="importance" class="form-control-range" formControlName="importance" min="1" max="10" />
+        <small class="form-text text-muted">Importance: {{documentForm.get('importance')?.value}}</small>
+      </div>
+  
+      <div class="form-group">
+        <label for="documentDate">Document Date</label>
+        <input id="documentDate" type="date" class="form-control" formControlName="documentDate" />
+      </div>
+  
+      <div class="form-group">
+        <label for="documentFileName">Document File</label>
+        <input id="documentFileName" type="file" class="form-control" (change)="onFileSelected($event)" />
+        <small class="form-text text-muted">
+          <ng-container *ngIf="selectedFile">
+            Selected File: {{ selectedFile.name }}
+          </ng-container>
+          <ng-container *ngIf="!selectedFile && documentFileName">
+            Uploaded File: <a [href]="getFileUrl(documentFileName)" target="_blank">{{ documentFileName }}</a>
+          </ng-container>
+          <ng-container *ngIf="!selectedFile && !documentFileName">
+            No file selected
+          </ng-container>
+        </small>
+      </div>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="documentForm.invalid">Update</button>
+      <button mat-raised-button color="warn" routerLink="/dashboard">Cancel</button>
+    </form>
+  </div>
+  

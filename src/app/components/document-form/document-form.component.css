@@ -1,0 +1,38 @@
+.document-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button-container {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group.has-error .form-control {
+    border-color: red;
+  }
+  
+  .validation-error small {
+    color: red;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  input.form-control-range {
+    width: 100%;
+  }
+  
