@@ -8,12 +8,12 @@ import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'document/edit/:id', component: EditDocumentComponent },
+  { path: 'document/edit/:id', component: EditDocumentComponent, canActivate: [AuthGuard] }, // Consider if this needs auth guard
   { path: 'add-document', component: DocumentFormComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DocumentDashboardComponent, canActivate: [AuthGuard] },
   
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/login' } // Wildcard route for handling undefined paths
 ];
 
 @NgModule({
