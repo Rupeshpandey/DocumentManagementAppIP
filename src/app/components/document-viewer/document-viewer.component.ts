@@ -21,7 +21,7 @@ export class DocumentViewerComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data.documentId) {
-      this.http.get(`https://localhost:7143/api/document/view/${this.data.documentId}`, { responseType: 'blob' })
+      this.http.get(`https://localhost:7233/api/document/view/${this.data.documentId}`, { responseType: 'blob' })
         .subscribe(blob => {
           const url = URL.createObjectURL(blob);
           this.documentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url) as SafeResourceUrl;

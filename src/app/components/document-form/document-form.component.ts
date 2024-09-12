@@ -18,6 +18,7 @@ export class DocumentFormComponent implements OnInit {
   documentFile: File | null = null;
   userId: number | null = null;
   maxDate: string = '';
+  ipAddress: string = ''; // To store client IP address
 
   categories: { categoryId: number, categoryName: string }[] = [];
 
@@ -40,6 +41,7 @@ export class DocumentFormComponent implements OnInit {
 
     this.setMaxDate();
     this.loadCategories();
+    this.getClientIp(); // Get the client IP address
   }
 
   setMaxDate() {
@@ -48,7 +50,7 @@ export class DocumentFormComponent implements OnInit {
   }
 
   loadCategories() {
-    this.http.get<{ categoryId: number, categoryName: string }[]>('https://localhost:7143/api/Document/categories')
+    this.http.get<{ categoryId: number, categoryName: string }[]>('https://localhost:7233/api/Document/categories')
       .subscribe({
         next: (data) => {
           this.categories = data;
@@ -57,6 +59,17 @@ export class DocumentFormComponent implements OnInit {
           console.error('Error loading categories:', error);
         }
       });
+  }
+
+  getClientIp() {
+    this.http.get<{ ip: string }>('https://api.ipify.org?format=json').subscribe({
+      next: (response) => {
+        this.ipAddress = response.ip; // Store the client's IP address
+      },
+      error: (error) => {
+        console.error('Error fetching IP address:', error);
+      }
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -102,8 +115,9 @@ export class DocumentFormComponent implements OnInit {
     formData.append('DocumentDate', this.documentDate);
     formData.append('DocumentFile', this.documentFile);
     formData.append('CreatedBy', this.userId.toString());
+    formData.append('IPAddress', this.ipAddress); // Send the IP address
 
-    this.http.post('https://localhost:7143/api/Document/insert', formData, { responseType: 'text' })
+    this.http.post('https://localhost:7233/api/Document/insert', formData, { responseType: 'text' })
       .subscribe({
         next: (response) => {
           Swal.fire({

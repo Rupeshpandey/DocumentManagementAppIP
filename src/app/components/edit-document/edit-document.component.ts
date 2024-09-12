@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
@@ -32,6 +32,7 @@ export class EditDocumentComponent implements OnInit {
   documentFileName: string = '';
   categories: Category[] = [];
   userId: number | null = null;
+  ipAddress: string = ''; // To store client IP address
 
   constructor(
     private fb: FormBuilder,
@@ -67,10 +68,22 @@ export class EditDocumentComponent implements OnInit {
     }
 
     this.getCategories();
+    this.getClientIp(); // Fetch the client's IP address
+  }
+
+  getClientIp() {
+    this.http.get<{ ip: string }>('https://api.ipify.org?format=json').subscribe({
+      next: (response) => {
+        this.ipAddress = response.ip; // Store the client's IP address
+      },
+      error: (error) => {
+        console.error('Error fetching IP address:', error);
+      }
+    });
   }
 
   getCategories(): void {
-    this.http.get<Category[]>('https://localhost:7143/api/Document/categories').subscribe(
+    this.http.get<Category[]>('https://localhost:7233/api/Document/categories').subscribe(
       (data) => {
         this.categories = data;
         this.getDocumentDetails(this.documentId);
@@ -83,7 +96,7 @@ export class EditDocumentComponent implements OnInit {
   }
 
   getDocumentDetails(documentId: number): void {
-    this.http.get<Document>(`https://localhost:7143/api/Document/get/${documentId}`).subscribe(
+    this.http.get<Document>(`https://localhost:7233/api/Document/get/${documentId}`).subscribe(
       (data) => {
         const formattedDate = data.documentDate ? data.documentDate.split('T')[0] : null;
   
@@ -109,7 +122,6 @@ export class EditDocumentComponent implements OnInit {
       }
     );
   }
-  
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -120,7 +132,7 @@ export class EditDocumentComponent implements OnInit {
   }
 
   getFileUrl(fileName: string): string {
-    return `https://localhost:7143/api/document/view/${this.documentId}`;
+    return `https://localhost:7233/api/document/view/${this.documentId}`;
   }
 
   saveDocument(): void {
@@ -137,6 +149,7 @@ export class EditDocumentComponent implements OnInit {
     formData.append('Importance', this.documentForm.get('importance')!.value);
     formData.append('DocumentDate', this.documentForm.get('documentDate')!.value);
     formData.append('UpdatedBy', this.userId!.toString());
+    formData.append('IPAddress', this.ipAddress); // Include IP address
 
     if (this.selectedFile) {
         // If a new file is selected, append it
@@ -154,7 +167,7 @@ export class EditDocumentComponent implements OnInit {
         console.log(`${key}: ${value}`);
     });
 
-    this.http.post('https://localhost:7143/api/Document/update', formData, { responseType: 'text' })
+    this.http.post('https://localhost:7233/api/Document/update', formData, { responseType: 'text' })
         .subscribe(
             (response: string) => {
                 Swal.fire('Success', 'Document updated successfully', 'success');
@@ -165,10 +178,8 @@ export class EditDocumentComponent implements OnInit {
                 Swal.fire('Error', 'Failed to update the document', 'error');
             }
         );
-}
+  }
 
-  
-  
   logout() {
     Swal.fire({
       title: 'Are you sure?',

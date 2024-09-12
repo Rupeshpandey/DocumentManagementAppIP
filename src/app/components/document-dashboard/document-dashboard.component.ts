@@ -64,7 +64,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   }
 
   fetchCategories() {
-    this.http.get<Category[]>('https://localhost:7143/api/Document/categories').subscribe(
+    this.http.get<Category[]>('https://localhost:7233/api/Document/categories').subscribe(
       (data) => {
         console.log('Fetched categories:', data);
         this.categories = data;
@@ -77,7 +77,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   }
 
   fetchDocuments() {
-    this.http.get<Document[]>('https://localhost:7143/api/Document/get').subscribe(
+    this.http.get<Document[]>('https://localhost:7233/api/Document/get').subscribe(
       (data) => {
         console.log('Fetched documents:', data);
         this.originalDataSource = data.map((doc) => ({
@@ -133,18 +133,23 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}?userId=${userId}`, { responseType: 'text' }).subscribe(
-          () => {
-            Swal.fire('Deleted!', 'The document has been deleted.', 'success');
-            this.fetchDocuments(); // Reload the documents after deletion
-          },
-          (error) => {
-            Swal.fire('Error', 'Failed to delete the document', 'error');
-          }
-        );
+        this.http
+          .delete(`https://localhost:7233/api/Document/delete/${documentId}?userId=${userId}`, { responseType: 'text' })
+          .subscribe(
+            (response) => {
+              Swal.fire('Deleted!', 'The document has been deleted.', 'success');
+              this.fetchDocuments(); // Reload the documents after deletion
+            },
+            (error) => {
+              Swal.fire('Error', 'Failed to delete the document. Please try again.', 'error');
+              console.error('Error deleting document:', error); // Log the error for debugging
+            }
+          );
       }
     });
   }
+  
+  
   
 
   logout() {

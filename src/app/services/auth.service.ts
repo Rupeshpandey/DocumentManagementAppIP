@@ -7,7 +7,7 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7143/api/Document';  // Update with your actual API URL
+  private apiUrl = 'https://localhost:7233/api/Document';  // Update with your actual API URL
 
   constructor(private http: HttpClient) {}
 
